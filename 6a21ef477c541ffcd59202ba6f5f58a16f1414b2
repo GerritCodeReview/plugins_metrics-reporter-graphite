@@ -72,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "f6f876fc_dec40165",
+        "filename": "src/main/java/com/googlesource/gerrit/plugins/metricsreporters/GerritGraphiteReporter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 1021592
+      },
+      "writtenOn": "2015-11-10T03:28:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f6f876fc_be9e5577",
+      "range": {
+        "startLine": 42,
+        "startChar": 10,
+        "endLine": 42,
+        "endChar": 26
+      },
+      "revId": "6a21ef477c541ffcd59202ba6f5f58a16f1414b2",
+      "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "16feeae5_9cae05c1",
         "filename": "src/main/java/com/googlesource/gerrit/plugins/metricsreporters/GerritGraphiteReporter.java",
         "patchSetId": 2
