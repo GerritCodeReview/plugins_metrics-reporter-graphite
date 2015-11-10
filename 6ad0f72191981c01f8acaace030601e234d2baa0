@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "16feeae5_dc76cd20",
+        "filename": "src/main/java/com/googlesource/gerrit/plugins/metricsreporters/GerritGraphiteReporter.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 1010134
+      },
+      "writtenOn": "2015-11-10T03:37:56Z",
+      "side": 1,
+      "message": "since you use MoreObjects this method can be removed ;)",
+      "range": {
+        "startLine": 66,
+        "startChar": 0,
+        "endLine": 68,
+        "endChar": 3
+      },
+      "revId": "6ad0f72191981c01f8acaace030601e234d2baa0",
+      "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153",
+      "unresolved": false
+    }
+  ]
+}
