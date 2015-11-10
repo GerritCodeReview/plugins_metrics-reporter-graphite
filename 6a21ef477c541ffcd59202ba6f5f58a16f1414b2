@@ -1,0 +1,165 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "16feeae5_7cb85903",
+        "filename": "src/main/java/com/googlesource/gerrit/plugins/metricsreporters/GerritGraphiteReporter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1010134
+      },
+      "writtenOn": "2015-11-10T03:14:11Z",
+      "side": 1,
+      "message": "any reason why both interfaces are implemented by this class?",
+      "range": {
+        "startLine": 41,
+        "startChar": 15,
+        "endLine": 41,
+        "endChar": 40
+      },
+      "revId": "6a21ef477c541ffcd59202ba6f5f58a16f1414b2",
+      "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f6f876fc_be9e5577",
+        "filename": "src/main/java/com/googlesource/gerrit/plugins/metricsreporters/GerritGraphiteReporter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 1010134
+      },
+      "writtenOn": "2015-11-10T03:14:11Z",
+      "side": 1,
+      "message": "also can be final provided that RTE will be thrown on UnknownHostExeception",
+      "range": {
+        "startLine": 42,
+        "startChar": 10,
+        "endLine": 42,
+        "endChar": 26
+      },
+      "revId": "6a21ef477c541ffcd59202ba6f5f58a16f1414b2",
+      "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "16feeae5_9cae05c1",
+        "filename": "src/main/java/com/googlesource/gerrit/plugins/metricsreporters/GerritGraphiteReporter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 1010134
+      },
+      "writtenOn": "2015-11-10T03:14:11Z",
+      "side": 1,
+      "message": "final?",
+      "range": {
+        "startLine": 43,
+        "startChar": 10,
+        "endLine": 43,
+        "endChar": 23
+      },
+      "revId": "6a21ef477c541ffcd59202ba6f5f58a16f1414b2",
+      "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f6f876fc_7b669f6d",
+        "filename": "src/main/java/com/googlesource/gerrit/plugins/metricsreporters/GerritGraphiteReporter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1010134
+      },
+      "writtenOn": "2015-11-10T03:14:11Z",
+      "side": 1,
+      "message": "how about using guava\u0027s MoreObjects.firstNotNull ?",
+      "range": {
+        "startLine": 50,
+        "startChar": 8,
+        "endLine": 50,
+        "endChar": 14
+      },
+      "revId": "6a21ef477c541ffcd59202ba6f5f58a16f1414b2",
+      "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f6f876fc_5b63e35b",
+        "filename": "src/main/java/com/googlesource/gerrit/plugins/metricsreporters/GerritGraphiteReporter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 1010134
+      },
+      "writtenOn": "2015-11-10T03:14:11Z",
+      "side": 1,
+      "message": "would throw RuntimeException so that plugin will be unloaded by gerrit",
+      "range": {
+        "startLine": 61,
+        "startChar": 6,
+        "endLine": 61,
+        "endChar": 26
+      },
+      "revId": "6a21ef477c541ffcd59202ba6f5f58a16f1414b2",
+      "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "16feeae5_fca3c9d6",
+        "filename": "src/main/java/com/googlesource/gerrit/plugins/metricsreporters/GerritGraphiteReporter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 1010134
+      },
+      "writtenOn": "2015-11-10T03:14:11Z",
+      "side": 1,
+      "message": "NPE when UnknowHostException will be thrown in constructor",
+      "range": {
+        "startLine": 71,
+        "startChar": 4,
+        "endLine": 71,
+        "endChar": 20
+      },
+      "revId": "6a21ef477c541ffcd59202ba6f5f58a16f1414b2",
+      "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "16feeae5_dca88db6",
+        "filename": "src/main/java/com/googlesource/gerrit/plugins/metricsreporters/GerritGraphiteReporter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 1010134
+      },
+      "writtenOn": "2015-11-10T03:14:11Z",
+      "side": 1,
+      "message": "same as above",
+      "range": {
+        "startLine": 76,
+        "startChar": 4,
+        "endLine": 76,
+        "endChar": 20
+      },
+      "revId": "6a21ef477c541ffcd59202ba6f5f58a16f1414b2",
+      "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153",
+      "unresolved": false
+    }
+  ]
+}
