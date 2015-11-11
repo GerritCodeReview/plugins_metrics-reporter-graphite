@@ -1,4 +1,4 @@
-// Copyright (C) 2012 The Android Open Source Project
+// Copyright (C) 2015 The Android Open Source Project
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -37,16 +37,17 @@ import java.util.concurrent.TimeUnit;
 
 @Listen
 @Singleton
-public class GerritGraphiteReporter
-    implements LifecycleListener {
+public class GerritGraphiteReporter implements LifecycleListener {
   private final GraphiteReporter graphiteReporter;
 
   @Inject
-  public GerritGraphiteReporter(PluginConfigFactory configFactory,
-      @PluginName String pluginName, MetricRegistry registry) {
+  public GerritGraphiteReporter(
+      PluginConfigFactory configFactory,
+      @PluginName String pluginName,
+      MetricRegistry registry) {
     Config config = configFactory.getGlobalPluginConfig(pluginName);
-    String host =
-        MoreObjects.firstNonNull(config.getString("graphite", null, "host"), "localhost");
+    String host = MoreObjects
+        .firstNonNull(config.getString("graphite", null, "host"), "localhost");
     try {
       Graphite graphite = new Graphite(
           new InetSocketAddress(host, config.getInt("graphite", "port", 2003)));
@@ -54,7 +55,8 @@ public class GerritGraphiteReporter
       graphiteReporter = GraphiteReporter.forRegistry(registry)
           .convertRatesTo(TimeUnit.MINUTES)
           .convertDurationsTo(TimeUnit.MILLISECONDS)
-          .prefixedWith(MoreObjects.firstNonNull(config.getString("graphite", null, "prefix"),
+          .prefixedWith(MoreObjects.firstNonNull(
+              config.getString("graphite", null, "prefix"),
               name("gerrit", InetAddress.getLocalHost().getHostName())))
           .filter(MetricFilter.ALL).build(graphite);
     } catch (UnknownHostException e) {
