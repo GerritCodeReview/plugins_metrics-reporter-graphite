@@ -14,8 +14,8 @@
 package com.googlesource.gerrit.plugins.metricsreporters;
 
 import static com.codahale.metrics.MetricRegistry.name;
+import static com.google.common.base.MoreObjects.firstNonNull;
 
-import com.google.common.base.MoreObjects;
 import com.google.gerrit.extensions.annotations.Listen;
 import com.google.gerrit.extensions.annotations.PluginName;
 import com.google.gerrit.extensions.events.LifecycleListener;
@@ -29,6 +29,8 @@ import com.codahale.metrics.graphite.Graphite;
 import com.codahale.metrics.graphite.GraphiteReporter;
 
 import org.eclipse.jgit.lib.Config;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -38,6 +40,9 @@ import java.util.concurrent.TimeUnit;
 @Listen
 @Singleton
 public class GerritGraphiteReporter implements LifecycleListener {
+  private static final Logger log =
+      LoggerFactory.getLogger(GerritGraphiteReporter.class);
+
   private final GraphiteReporter graphiteReporter;
 
   @Inject
@@ -46,22 +51,28 @@ public class GerritGraphiteReporter implements LifecycleListener {
       @PluginName String pluginName,
       MetricRegistry registry) {
     Config config = configFactory.getGlobalPluginConfig(pluginName);
-    String host = MoreObjects
-        .firstNonNull(config.getString("graphite", null, "host"), "localhost");
-    try {
-      Graphite graphite = new Graphite(
-          new InetSocketAddress(host, config.getInt("graphite", "port", 2003)));
-
-      graphiteReporter = GraphiteReporter.forRegistry(registry)
-          .convertRatesTo(TimeUnit.MINUTES)
-          .convertDurationsTo(TimeUnit.MILLISECONDS)
-          .prefixedWith(MoreObjects.firstNonNull(
-              config.getString("graphite", null, "prefix"),
-              name("gerrit", InetAddress.getLocalHost().getHostName())))
-          .filter(MetricFilter.ALL).build(graphite);
-    } catch (UnknownHostException e) {
-      throw new RuntimeException(e);
+    String host = firstNonNull(
+        config.getString("graphite", null, "host"), "localhost");
+    int port = config.getInt("graphite", "port", 2003);
+    String prefix = config.getString("graphite", null, "prefix");
+    if (prefix == null) {
+      try {
+        prefix = name("gerrit", InetAddress.getLocalHost().getHostName());
+      } catch (UnknownHostException e) {
+        log.error("Failed to get hostname", e);
+        throw new RuntimeException(e);
+      }
     }
+    log.info(
+        String.format("Reporting to Graphite at host %s on port %d with prefix %s",
+        host, port, prefix));
+
+    graphiteReporter = GraphiteReporter.forRegistry(registry)
+        .convertRatesTo(TimeUnit.MINUTES)
+        .convertDurationsTo(TimeUnit.MILLISECONDS)
+        .prefixedWith(prefix)
+        .filter(MetricFilter.ALL)
+        .build(new Graphite(new InetSocketAddress(host, port)));
   }
 
   @Override
