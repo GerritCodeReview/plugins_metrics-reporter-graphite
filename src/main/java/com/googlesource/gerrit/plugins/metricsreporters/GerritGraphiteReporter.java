@@ -43,6 +43,13 @@ public class GerritGraphiteReporter implements LifecycleListener {
   private static final Logger log =
       LoggerFactory.getLogger(GerritGraphiteReporter.class);
 
+  private static final String SECTION_GRAPHITE = "graphite";
+  private static final String KEY_HOST = "host";
+  private static final String KEY_PORT = "port";
+  private static final String KEY_PREFIX = "prefix";
+  private static final String DEFAULT_HOST = "localhost";
+  private static final int DEFAULT_PORT = 2003;
+  private static final String DEFAULT_PREFIX = "gerrit";
   private final GraphiteReporter graphiteReporter;
 
   @Inject
@@ -52,12 +59,12 @@ public class GerritGraphiteReporter implements LifecycleListener {
       MetricRegistry registry) {
     Config config = configFactory.getGlobalPluginConfig(pluginName);
     String host = firstNonNull(
-        config.getString("graphite", null, "host"), "localhost");
-    int port = config.getInt("graphite", "port", 2003);
-    String prefix = config.getString("graphite", null, "prefix");
+        config.getString(SECTION_GRAPHITE, null, KEY_HOST), DEFAULT_HOST);
+    int port = config.getInt(SECTION_GRAPHITE, KEY_PORT, DEFAULT_PORT);
+    String prefix = config.getString(SECTION_GRAPHITE, null, KEY_PREFIX);
     if (prefix == null) {
       try {
-        prefix = name("gerrit", InetAddress.getLocalHost().getHostName());
+        prefix = name(DEFAULT_PREFIX, InetAddress.getLocalHost().getHostName());
       } catch (UnknownHostException e) {
         log.error("Failed to get hostname", e);
         throw new RuntimeException(e);
