@@ -16,3 +16,13 @@ graphite.port
 graphite.prefix
 :	Prefix to use when reporting metrics. Defaults to `gerrit.`
 	suffixed with the hostname of `localhost`.
+
+graphite.rateUnit
+:	Time unit for reporting rate. Values may be given using
+	the `java.util.concurrent.TimeUnit` enumerations.
+	Defaults to `MINUTES`.
+
+graphite.rate
+:	Reporting rate. Defaults to `1`, i.e. combined with the
+	default value of `graphite.rateUnit`, the default reporting
+	rate is 1 minute.

@@ -47,10 +47,17 @@ public class GerritGraphiteReporter implements LifecycleListener {
   private static final String KEY_HOST = "host";
   private static final String KEY_PORT = "port";
   private static final String KEY_PREFIX = "prefix";
+  private static final String KEY_RATE_UNIT = "rateUnit";
+  private static final String KEY_RATE = "rate";
   private static final String DEFAULT_HOST = "localhost";
   private static final int DEFAULT_PORT = 2003;
   private static final String DEFAULT_PREFIX = "gerrit";
+  private static final TimeUnit DEFAULT_RATE_UNIT = TimeUnit.MINUTES;
+  private static final int DEFAULT_RATE = 1;
+
   private final GraphiteReporter graphiteReporter;
+  private final TimeUnit rateUnit;
+  private final int rate;
 
   @Inject
   public GerritGraphiteReporter(
@@ -70,12 +77,15 @@ public class GerritGraphiteReporter implements LifecycleListener {
         throw new RuntimeException(e);
       }
     }
+    rateUnit = config.getEnum(
+        SECTION_GRAPHITE, null, KEY_RATE_UNIT, DEFAULT_RATE_UNIT);
+    rate = config.getInt(SECTION_GRAPHITE, KEY_RATE, DEFAULT_RATE);
     log.info(
         String.format("Reporting to Graphite at host %s on port %d with prefix %s",
         host, port, prefix));
 
     graphiteReporter = GraphiteReporter.forRegistry(registry)
-        .convertRatesTo(TimeUnit.MINUTES)
+        .convertRatesTo(rateUnit)
         .convertDurationsTo(TimeUnit.MILLISECONDS)
         .prefixedWith(prefix)
         .filter(MetricFilter.ALL)
@@ -84,7 +94,7 @@ public class GerritGraphiteReporter implements LifecycleListener {
 
   @Override
   public void start() {
-    graphiteReporter.start(1, TimeUnit.MINUTES);
+    graphiteReporter.start(rate, rateUnit);
   }
 
   @Override
