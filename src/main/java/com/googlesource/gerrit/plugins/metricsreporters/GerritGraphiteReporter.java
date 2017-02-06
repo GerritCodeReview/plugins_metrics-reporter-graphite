@@ -81,7 +81,7 @@ public class GerritGraphiteReporter implements LifecycleListener {
         SECTION_GRAPHITE, null, KEY_RATE_UNIT, DEFAULT_RATE_UNIT);
     rate = config.getInt(SECTION_GRAPHITE, KEY_RATE, DEFAULT_RATE);
     log.info(
-        String.format("Reporting to Graphite at host %s on port %d with prefix %s",
+        String.format("Reporting to Graphite at %s:%d with prefix %s",
         host, port, prefix));
 
     graphiteReporter = GraphiteReporter.forRegistry(registry)
