@@ -16,3 +16,9 @@ graphite.port
 graphite.prefix
 :	Prefix to use when reporting metrics. Defaults to `gerrit.`
 	suffixed with the hostname of `localhost`.
+
+graphite.rate
+:	Reporting rate in seconds. May be specified in common time
+	units such as 'm', 's', 'ms', etc, but will be converted
+	to seconds. The lowest supported rate is `1 s`.
+	Defaults to `60 s`.

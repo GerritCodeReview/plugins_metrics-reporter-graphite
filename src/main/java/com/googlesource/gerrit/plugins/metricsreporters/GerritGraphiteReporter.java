@@ -47,10 +47,15 @@ public class GerritGraphiteReporter implements LifecycleListener {
   private static final String KEY_HOST = "host";
   private static final String KEY_PORT = "port";
   private static final String KEY_PREFIX = "prefix";
+  private static final String KEY_RATE = "rate";
   private static final String DEFAULT_HOST = "localhost";
   private static final int DEFAULT_PORT = 2003;
   private static final String DEFAULT_PREFIX = "gerrit";
+  private static final TimeUnit DEFAULT_RATE_UNIT = TimeUnit.SECONDS;
+  private static final int DEFAULT_RATE = 60;
+
   private final GraphiteReporter graphiteReporter;
+  private final int rate;
 
   @Inject
   public GerritGraphiteReporter(
@@ -70,9 +75,27 @@ public class GerritGraphiteReporter implements LifecycleListener {
         throw new RuntimeException(e);
       }
     }
-    log.info(
-        String.format("Reporting to Graphite at %s:%d with prefix %s",
-        host, port, prefix));
+
+    long configRate;
+    try {
+      configRate = config.getTimeUnit(
+          SECTION_GRAPHITE, null, KEY_RATE, DEFAULT_RATE, DEFAULT_RATE_UNIT);
+    } catch (IllegalArgumentException e) {
+      log.warn(String.format(
+          "Invalid rate value; default to %ds", DEFAULT_RATE));
+      configRate = DEFAULT_RATE;
+    }
+    if (configRate > 0) {
+      rate = (int) configRate;
+    } else {
+      log.warn(String.format(
+          "Rate value must be positive; default to %ds", DEFAULT_RATE));
+      rate = DEFAULT_RATE;
+    }
+
+    log.info(String.format(
+        "Reporting to Graphite at %s:%d with prefix %s at rate %ds",
+        host, port, prefix, rate));
 
     graphiteReporter = GraphiteReporter.forRegistry(registry)
         .convertRatesTo(TimeUnit.MINUTES)
@@ -84,7 +107,7 @@ public class GerritGraphiteReporter implements LifecycleListener {
 
   @Override
   public void start() {
-    graphiteReporter.start(1, TimeUnit.MINUTES);
+    graphiteReporter.start(rate, DEFAULT_RATE_UNIT);
   }
 
   @Override
