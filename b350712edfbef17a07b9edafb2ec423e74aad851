@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8f055568_829f72b3",
+        "filename": "BUILD",
+        "patchSetId": 4
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1011323
+      },
+      "writtenOn": "2017-02-15T08:03:03Z",
+      "side": 1,
+      "message": "remove it. it\u0027s in the plugin API already.",
+      "range": {
+        "startLine": 11,
+        "startChar": 8,
+        "endLine": 11,
+        "endChar": 32
+      },
+      "revId": "b350712edfbef17a07b9edafb2ec423e74aad851",
+      "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153",
+      "unresolved": false
+    }
+  ]
+}
