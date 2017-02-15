@@ -65,7 +65,13 @@ public class GerritGraphiteReporter implements LifecycleListener {
     Config config = configFactory.getGlobalPluginConfig(pluginName);
     String host = firstNonNull(
         config.getString(SECTION_GRAPHITE, null, KEY_HOST), DEFAULT_HOST);
-    int port = config.getInt(SECTION_GRAPHITE, KEY_PORT, DEFAULT_PORT);
+    int port;
+    try {
+      port = config.getInt(SECTION_GRAPHITE, KEY_PORT, DEFAULT_PORT);
+    } catch (IllegalArgumentException e) {
+      log.warn(String.format("Invalid port value; default to %d", DEFAULT_PORT));
+      port = DEFAULT_PORT;
+    }
     String prefix = config.getString(SECTION_GRAPHITE, null, KEY_PREFIX);
     if (prefix == null) {
       try {
