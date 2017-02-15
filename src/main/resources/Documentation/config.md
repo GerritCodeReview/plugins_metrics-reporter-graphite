@@ -8,7 +8,8 @@ The optional file `$site_path/etc/@PLUGIN@.config` is a Git-style
 config file that controls the settings for the @PLUGIN@ plugin.
 
 graphite.host
-:	Hostname of the Graphite server. Defaults to `localhost`.
+:	Hostname of the Graphite server. Mandatory. If not specified,
+	the plugin does not report to any Graphite instance.
 
 graphite.port
 :	Port number of the Graphite server. Defaults to `2003`.

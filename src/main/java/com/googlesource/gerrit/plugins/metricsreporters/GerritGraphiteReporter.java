@@ -14,7 +14,6 @@
 package com.googlesource.gerrit.plugins.metricsreporters;
 
 import static com.codahale.metrics.MetricRegistry.name;
-import static com.google.common.base.MoreObjects.firstNonNull;
 
 import com.google.gerrit.extensions.annotations.Listen;
 import com.google.gerrit.extensions.annotations.PluginName;
@@ -48,7 +47,6 @@ public class GerritGraphiteReporter implements LifecycleListener {
   private static final String KEY_PORT = "port";
   private static final String KEY_PREFIX = "prefix";
   private static final String KEY_RATE = "rate";
-  private static final String DEFAULT_HOST = "localhost";
   private static final int DEFAULT_PORT = 2003;
   private static final String DEFAULT_PREFIX = "gerrit";
   private static final TimeUnit DEFAULT_RATE_UNIT = TimeUnit.SECONDS;
@@ -63,61 +61,71 @@ public class GerritGraphiteReporter implements LifecycleListener {
       @PluginName String pluginName,
       MetricRegistry registry) {
     Config config = configFactory.getGlobalPluginConfig(pluginName);
-    String host = firstNonNull(
-        config.getString(SECTION_GRAPHITE, null, KEY_HOST), DEFAULT_HOST);
-    int port;
-    try {
-      port = config.getInt(SECTION_GRAPHITE, KEY_PORT, DEFAULT_PORT);
-    } catch (IllegalArgumentException e) {
-      log.warn(String.format("Invalid port value; default to %d", DEFAULT_PORT));
-      port = DEFAULT_PORT;
-    }
-    String prefix = config.getString(SECTION_GRAPHITE, null, KEY_PREFIX);
-    if (prefix == null) {
+    String host = config.getString(SECTION_GRAPHITE, null, KEY_HOST);
+
+    if (host != null) {
+      int port;
       try {
-        prefix = name(DEFAULT_PREFIX, InetAddress.getLocalHost().getHostName());
-      } catch (UnknownHostException e) {
-        log.error("Failed to get hostname", e);
-        throw new RuntimeException(e);
+        port = config.getInt(SECTION_GRAPHITE, KEY_PORT, DEFAULT_PORT);
+      } catch (IllegalArgumentException e) {
+        log.warn(String.format("Invalid port value; default to %d", DEFAULT_PORT));
+        port = DEFAULT_PORT;
       }
-    }
+      String prefix = config.getString(SECTION_GRAPHITE, null, KEY_PREFIX);
+      if (prefix == null) {
+        try {
+          prefix = name(DEFAULT_PREFIX, InetAddress.getLocalHost().getHostName());
+        } catch (UnknownHostException e) {
+          log.error("Failed to get hostname", e);
+          throw new RuntimeException(e);
+        }
+      }
 
-    long configRate;
-    try {
-      configRate = config.getTimeUnit(
-          SECTION_GRAPHITE, null, KEY_RATE, DEFAULT_RATE, DEFAULT_RATE_UNIT);
-    } catch (IllegalArgumentException e) {
-      log.warn(String.format(
-          "Invalid rate value; default to %ds", DEFAULT_RATE));
-      configRate = DEFAULT_RATE;
-    }
-    if (configRate > 0) {
-      rate = (int) configRate;
+      long configRate;
+      try {
+        configRate = config.getTimeUnit(
+            SECTION_GRAPHITE, null, KEY_RATE, DEFAULT_RATE, DEFAULT_RATE_UNIT);
+      } catch (IllegalArgumentException e) {
+        log.warn(String.format(
+            "Invalid rate value; default to %ds", DEFAULT_RATE));
+        configRate = DEFAULT_RATE;
+      }
+      if (configRate > 0) {
+        rate = (int) configRate;
+      } else {
+        log.warn(String.format(
+            "Rate value must be positive; default to %ds", DEFAULT_RATE));
+        rate = DEFAULT_RATE;
+      }
+
+      log.info(String.format(
+          "Reporting to Graphite at %s:%d with prefix %s at rate %ds",
+          host, port, prefix, rate));
+
+      graphiteReporter = GraphiteReporter.forRegistry(registry)
+          .convertRatesTo(TimeUnit.MINUTES)
+          .convertDurationsTo(TimeUnit.MILLISECONDS)
+          .prefixedWith(prefix)
+          .filter(MetricFilter.ALL)
+          .build(new Graphite(new InetSocketAddress(host, port)));
     } else {
-      log.warn(String.format(
-          "Rate value must be positive; default to %ds", DEFAULT_RATE));
-      rate = DEFAULT_RATE;
+      log.warn("No hostname configured; not reporting to Graphite");
+      graphiteReporter = null;
+      rate = 0;
     }
-
-    log.info(String.format(
-        "Reporting to Graphite at %s:%d with prefix %s at rate %ds",
-        host, port, prefix, rate));
-
-    graphiteReporter = GraphiteReporter.forRegistry(registry)
-        .convertRatesTo(TimeUnit.MINUTES)
-        .convertDurationsTo(TimeUnit.MILLISECONDS)
-        .prefixedWith(prefix)
-        .filter(MetricFilter.ALL)
-        .build(new Graphite(new InetSocketAddress(host, port)));
   }
 
   @Override
   public void start() {
-    graphiteReporter.start(rate, DEFAULT_RATE_UNIT);
+    if (graphiteReporter != null) {
+      graphiteReporter.start(rate, DEFAULT_RATE_UNIT);
+    }
   }
 
   @Override
   public void stop() {
-    graphiteReporter.stop();
+    if (graphiteReporter != null) {
+      graphiteReporter.stop();
+    }
   }
 }
