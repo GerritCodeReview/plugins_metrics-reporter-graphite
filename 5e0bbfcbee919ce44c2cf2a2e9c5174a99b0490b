@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "48ca9857_7e3c77a6",
+        "filename": "external_plugin_deps.bzl",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1011123
+      },
+      "writtenOn": "2017-02-15T07:59:54Z",
+      "side": 1,
+      "message": "note: this is not formatted in the standard way, but the buildifier tool does not support .bzl files so I haven\u0027t auto-formatted it.",
+      "revId": "5e0bbfcbee919ce44c2cf2a2e9c5174a99b0490b",
+      "serverId": "173816e5-2b9a-37c3-8a2e-48639d4f1153",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fec75046_1a7a2a96",
         "filename": "src/main/resources/Documentation/build.md",
         "patchSetId": 3
