@@ -118,7 +118,16 @@ public class GerritGraphiteReporter implements LifecycleListener {
   @Override
   public void start() {
     if (graphiteReporter != null) {
-      graphiteReporter.start(rate, DEFAULT_RATE_UNIT);
+      try {
+        graphiteReporter.start(rate, DEFAULT_RATE_UNIT);
+      } catch (IllegalArgumentException e) {
+        String msg = e.getMessage();
+        if ("Reporter already started".equals(msg)) {
+          log.warn(msg);
+        } else {
+          throw e;
+        }
+      }
     }
   }
 
