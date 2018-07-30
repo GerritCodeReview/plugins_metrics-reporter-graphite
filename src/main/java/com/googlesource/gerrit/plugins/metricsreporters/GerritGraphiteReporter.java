@@ -15,32 +15,28 @@ package com.googlesource.gerrit.plugins.metricsreporters;
 
 import static com.codahale.metrics.MetricRegistry.name;
 
+import com.codahale.metrics.MetricFilter;
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.graphite.Graphite;
+import com.codahale.metrics.graphite.GraphiteReporter;
 import com.google.gerrit.extensions.annotations.Listen;
 import com.google.gerrit.extensions.annotations.PluginName;
 import com.google.gerrit.extensions.events.LifecycleListener;
 import com.google.gerrit.server.config.PluginConfigFactory;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-
-import com.codahale.metrics.MetricFilter;
-import com.codahale.metrics.MetricRegistry;
-import com.codahale.metrics.graphite.Graphite;
-import com.codahale.metrics.graphite.GraphiteReporter;
-
-import org.eclipse.jgit.lib.Config;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.util.concurrent.TimeUnit;
+import org.eclipse.jgit.lib.Config;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Listen
 @Singleton
 public class GerritGraphiteReporter implements LifecycleListener {
-  private static final Logger log =
-      LoggerFactory.getLogger(GerritGraphiteReporter.class);
+  private static final Logger log = LoggerFactory.getLogger(GerritGraphiteReporter.class);
 
   private static final String SECTION_GRAPHITE = "graphite";
   private static final String KEY_HOST = "host";
@@ -57,9 +53,7 @@ public class GerritGraphiteReporter implements LifecycleListener {
 
   @Inject
   public GerritGraphiteReporter(
-      PluginConfigFactory configFactory,
-      @PluginName String pluginName,
-      MetricRegistry registry) {
+      PluginConfigFactory configFactory, @PluginName String pluginName, MetricRegistry registry) {
     Config config = configFactory.getGlobalPluginConfig(pluginName);
     String host = config.getString(SECTION_GRAPHITE, null, KEY_HOST);
 
@@ -83,31 +77,31 @@ public class GerritGraphiteReporter implements LifecycleListener {
 
       long configRate;
       try {
-        configRate = config.getTimeUnit(
-            SECTION_GRAPHITE, null, KEY_RATE, DEFAULT_RATE, DEFAULT_RATE_UNIT);
+        configRate =
+            config.getTimeUnit(SECTION_GRAPHITE, null, KEY_RATE, DEFAULT_RATE, DEFAULT_RATE_UNIT);
       } catch (IllegalArgumentException e) {
-        log.warn(String.format(
-            "Invalid rate value; default to %ds", DEFAULT_RATE));
+        log.warn(String.format("Invalid rate value; default to %ds", DEFAULT_RATE));
         configRate = DEFAULT_RATE;
       }
       if (configRate > 0) {
         rate = (int) configRate;
       } else {
-        log.warn(String.format(
-            "Rate value must be positive; default to %ds", DEFAULT_RATE));
+        log.warn(String.format("Rate value must be positive; default to %ds", DEFAULT_RATE));
         rate = DEFAULT_RATE;
       }
 
-      log.info(String.format(
-          "Reporting to Graphite at %s:%d with prefix %s at rate %ds",
-          host, port, prefix, rate));
+      log.info(
+          String.format(
+              "Reporting to Graphite at %s:%d with prefix %s at rate %ds",
+              host, port, prefix, rate));
 
-      graphiteReporter = GraphiteReporter.forRegistry(registry)
-          .convertRatesTo(TimeUnit.MINUTES)
-          .convertDurationsTo(TimeUnit.MILLISECONDS)
-          .prefixedWith(prefix)
-          .filter(MetricFilter.ALL)
-          .build(new Graphite(new InetSocketAddress(host, port)));
+      graphiteReporter =
+          GraphiteReporter.forRegistry(registry)
+              .convertRatesTo(TimeUnit.MINUTES)
+              .convertDurationsTo(TimeUnit.MILLISECONDS)
+              .prefixedWith(prefix)
+              .filter(MetricFilter.ALL)
+              .build(new Graphite(new InetSocketAddress(host, port)));
     } else {
       log.warn("No hostname configured; not reporting to Graphite");
       graphiteReporter = null;
