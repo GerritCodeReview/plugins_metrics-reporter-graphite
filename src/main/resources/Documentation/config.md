@@ -7,6 +7,9 @@ File `@PLUGIN@.config`
 The optional file `$site_path/etc/@PLUGIN@.config` is a Git-style
 config file that controls the settings for the @PLUGIN@ plugin.
 
+metrics.exclude
+:	List of patterns matching metrics that should be excluded.
+
 graphite.host
 :	Hostname of the Graphite server. Mandatory. If not specified,
 	the plugin does not report to any Graphite instance.

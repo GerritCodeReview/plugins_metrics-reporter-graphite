@@ -14,6 +14,7 @@
 package com.googlesource.gerrit.plugins.metricsreporters;
 
 import static com.codahale.metrics.MetricRegistry.name;
+import static java.util.stream.Collectors.toList;
 
 import com.codahale.metrics.MetricFilter;
 import com.codahale.metrics.MetricRegistry;
@@ -23,12 +24,18 @@ import com.google.gerrit.extensions.annotations.Listen;
 import com.google.gerrit.extensions.annotations.PluginName;
 import com.google.gerrit.extensions.events.LifecycleListener;
 import com.google.gerrit.server.config.PluginConfigFactory;
+import com.google.gwt.dev.util.collect.HashSet;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
 import org.eclipse.jgit.lib.Config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +46,8 @@ public class GerritGraphiteReporter implements LifecycleListener {
   private static final Logger log = LoggerFactory.getLogger(GerritGraphiteReporter.class);
 
   private static final String SECTION_GRAPHITE = "graphite";
+  private static final String SECTION_METRICS = "metrics";
+  private static final String KEY_EXCLUDE = "exclude";
   private static final String KEY_HOST = "host";
   private static final String KEY_PORT = "port";
   private static final String KEY_PREFIX = "prefix";
@@ -95,8 +104,16 @@ public class GerritGraphiteReporter implements LifecycleListener {
               "Reporting to Graphite at %s:%d with prefix %s at rate %ds",
               host, port, prefix, rate));
 
+      Set<String> excludes =
+          new HashSet<>(Arrays.asList(config.getStringList(SECTION_METRICS, null, KEY_EXCLUDE)));
+
+      List<Pattern> excludePatterns =
+          excludes.stream().map(e -> Pattern.compile(e)).collect(toList());
+      Predicate<String> exclusionFilter =
+          s -> excludePatterns.stream().anyMatch(e -> e.matcher(s).matches());
       graphiteReporter =
           GraphiteReporter.forRegistry(registry)
+              .filter((n, m) -> !exclusionFilter.test(n))
               .convertRatesTo(TimeUnit.MINUTES)
               .convertDurationsTo(TimeUnit.MILLISECONDS)
               .prefixedWith(prefix)
