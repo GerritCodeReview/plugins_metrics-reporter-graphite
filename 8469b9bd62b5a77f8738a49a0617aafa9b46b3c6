@@ -1,11 +1,13 @@
 {
   "checks": {
     "zuul-check:plugins_metrics-reporter-graphite": {
-      "state": "SCHEDULED",
-      "message": "Change has been enqueued in check",
+      "state": "NOT_RELEVANT",
+      "message": "Project has no jobs configured",
+      "url": "https://ci.gerritcodereview.com/t/gerrit/buildset/021dcacd79e741b89f6bef6c666d5144",
       "started": "2020-06-30T12:04:57Z",
+      "finished": "2020-06-30T12:04:58Z",
       "created": "2020-06-30T12:04:57Z",
-      "updated": "2020-06-30T12:04:57Z"
+      "updated": "2020-06-30T12:04:58Z"
     }
   }
 }
